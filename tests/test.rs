@@ -20,12 +20,4 @@ fn calc_dfts() {
     sig = sig_orig.clone();
     dit(sig.as_mut_slice());
     assert!(sig == result, "testing dit");
-
-    let ref mut sig = sig_orig.clone();
-    dit_vec(sig);
-    assert!(*sig == result, "testing dif_vec");
-
-    let ref mut sig = sig_orig.clone();
-    dif_vec(sig);
-    assert!(*sig == result, "testing dit_vec");
 }
