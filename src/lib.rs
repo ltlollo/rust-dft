@@ -1,5 +1,5 @@
 #![crate_type = "lib"]
-#![desc = "Some algoritms"]
+#![desc = "Time and frequency decimation discrete fourier tranform"]
 #![license = "GPLv2"]
 
 extern crate num;
