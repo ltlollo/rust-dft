@@ -6,19 +6,18 @@ extern crate num;
 extern crate core;
 
 use num::complex::Complex;
+use num::{Zero, One, Num};
 use std::num::FromPrimitive;
-use core::num::Float;
+use std::num::{Float, FloatMath};
 
-pub fn dit<T: FloatMath + FromPrimitive>(sig: &mut [Complex<T>]) {
+pub fn dit<T: Num + Zero + One + FloatMath + FromPrimitive>(sig: &mut [Complex<T>]) {
     let len = sig.len();
     if len <= 1 {
         return;
     }
     let n: T = FromPrimitive::from_uint(len).unwrap();
-    let r: T = FromPrimitive::from_uint(1).unwrap();
-    let zero: T = FromPrimitive::from_uint(0).unwrap();
-    let mut even_vec = Vec::from_elem(len/2, Complex::new(zero, zero));
-    let mut odd_vec = Vec::from_elem(len/2, Complex::new(zero, zero));
+    let mut even_vec = Vec::from_elem(len/2, Zero::zero());
+    let mut odd_vec = Vec::from_elem(len/2, Zero::zero());
     let even = even_vec.as_mut_slice();
     let odd = odd_vec.as_mut_slice();
     for i in range(0, len/2 as uint) {
@@ -30,26 +29,26 @@ pub fn dit<T: FloatMath + FromPrimitive>(sig: &mut [Complex<T>]) {
     for i in range(0, len/2 as uint) {
         let k: T = FromPrimitive::from_uint(i).unwrap();
         let th: T = -k*Float::two_pi()/n;
-        odd[i] = odd[i] * Complex::from_polar(&r, &th);
+        odd[i] = odd[i] * Complex::from_polar(&One::one(), &th);
         sig[i] = even[i] + odd[i];
         sig[i+len/2] = even[i] - odd[i];
     }
 }
 
-pub fn dif<T: FloatMath + FromPrimitive>(sig: &mut [Complex<T>]) {
+pub fn dif<T: Num + One + FloatMath + FromPrimitive>(sig: &mut [Complex<T>]) {
     let len = sig.len();
     if len <= 1 {
         return;
     }
     let n: T = FromPrimitive::from_uint(len).unwrap();
-    let r: T = FromPrimitive::from_int(-1).unwrap();
+    //let r: T = FromPrimitive::from_int(-1).unwrap();
     let mut vec = sig.to_vec();
     let (first, second) = vec.split_at_mut(len/2);
     for i in range(0, len/2 as uint) {
         let k: T = FromPrimitive::from_uint(i).unwrap();
         let th: T = -k*Float::two_pi()/n;
         first[i] = first[i] + sig[i+len/2];
-        second[i] = (second[i]-sig[i])*Complex::from_polar(&r, &th);
+        second[i] = (sig[i]-second[i])*Complex::from_polar(&One::one(), &th);
     }
     dif(first);
     dif(second);
