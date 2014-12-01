@@ -10,7 +10,8 @@ use num::{Zero, One, Num};
 use std::num::FromPrimitive;
 use std::num::{Float, FloatMath};
 
-pub fn dit<T: Num + Zero + One + FloatMath + FromPrimitive>(sig: &mut [Complex<T>]) {
+pub fn dit<T>(sig: &mut [Complex<T>])
+    where T : Num + Zero + One + FloatMath + FromPrimitive {
     let len = sig.len();
     if len <= 1 {
         return;
@@ -35,13 +36,13 @@ pub fn dit<T: Num + Zero + One + FloatMath + FromPrimitive>(sig: &mut [Complex<T
     }
 }
 
-pub fn dif<T: Num + One + FloatMath + FromPrimitive>(sig: &mut [Complex<T>]) {
+pub fn dif<T>(sig: &mut [Complex<T>])
+    where T : Num + One + FloatMath + FromPrimitive {
     let len = sig.len();
     if len <= 1 {
         return;
     }
     let n: T = FromPrimitive::from_uint(len).unwrap();
-    //let r: T = FromPrimitive::from_int(-1).unwrap();
     let mut vec = sig.to_vec();
     let (first, second) = vec.split_at_mut(len/2);
     for i in range(0, len/2 as uint) {
