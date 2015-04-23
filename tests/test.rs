@@ -1,5 +1,3 @@
-#![feature(globs)]
-
 extern crate dfts;
 extern crate num;
 
@@ -14,10 +12,10 @@ fn calc_dfts() {
     let result = vec![four, zero, zero, zero, four, zero, zero, zero];
     let sig_orig = vec![one, zero, one, zero, one, zero, one, zero];
     let mut sig = sig_orig.clone();
-    dif(sig.as_mut_slice());
+    dif(&mut sig[..]);
     assert!(sig == result, "testing dif");
 
     sig = sig_orig.clone();
-    dit(sig.as_mut_slice());
+    dit(&mut sig[..]);
     assert!(sig == result, "testing dit");
 }
