@@ -10,7 +10,7 @@ use dfts::*;
 
 #[bench]
 fn mesure_dif(b: &mut Bencher) {
-    let mut sig : Vec<_>= (0..2048).map(|_| {
+    let mut sig : Vec<_> = (0..2048).map(|_| {
         Complex::new(1 as f64, 1 as f64)
     }).collect();
     b.iter(|| dif(&mut sig[..]));
@@ -18,7 +18,7 @@ fn mesure_dif(b: &mut Bencher) {
 
 #[bench]
 fn mesure_dit(b: &mut Bencher) {
-    let mut sig : Vec<_>= (0..2048).map(|_| {
+    let mut sig : Vec<_> = (0..2048).map(|_| {
         Complex::new(1 as f64, 1 as f64)
     }).collect();
     b.iter(|| dit(&mut sig[..]));
