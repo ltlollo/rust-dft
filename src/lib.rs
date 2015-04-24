@@ -9,6 +9,7 @@ use num::{Zero, One};
 use num::traits::Float;
 use std::f32::consts::PI_2 as PI32_2;
 use std::f64::consts::PI_2 as PI64_2;
+use std::option::Option;
 
 pub trait MathConsts : Float {
     fn two_pi() -> Self;
@@ -77,9 +78,16 @@ pub fn dif<T>(sig: &mut [Complex<T>])
     }
 }
 
-pub fn fhwt<T>(sig: &mut [T]) where T: MathConsts {
-    if sig.len() < 2 || sig.len()%2 != 0 {
-        return;
+fn is_pow2(n: usize) -> bool {
+    (2 as usize).pow((n as f32).log2() as u32) == n
+}
+
+pub fn fhwt<T>(sig: &mut [T]) -> Option<()> where T: MathConsts {
+    if !is_pow2(sig.len()) {
+        return None;
+    }
+    if sig.len() < 2 {
+        return Some(());
     }
     let times = (sig.len() as f32).log2() as usize;
     let mut len  = sig.len()/2;
@@ -94,11 +102,15 @@ pub fn fhwt<T>(sig: &mut [T]) where T: MathConsts {
         i = i*2;
         len = len/2;
     }
+    Some(())
 }
 
-pub fn fihwt<T>(sig: &mut [T]) where T: Float {
-    if sig.len() < 2 || sig.len()%2 != 0 {
-        return;
+pub fn fihwt<T>(sig: &mut [T]) -> Option<()> where T: Float {
+    if !is_pow2(sig.len()) {
+        return None;
+    }
+    if sig.len() < 2 {
+        return Some(());
     }
     let times = (sig.len() as f32).log2() as usize;
     let mut len = sig.len()/2;
@@ -113,4 +125,5 @@ pub fn fihwt<T>(sig: &mut [T]) where T: Float {
         i = i*2;
         len = len/2;
     }
+    Some(())
 }

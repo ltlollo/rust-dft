@@ -14,7 +14,6 @@ fn test_dfts() {
     let mut sig = sig_orig.clone();
     dif(&mut sig[..]);
     assert!(sig == result, "testing dif");
-
     sig = sig_orig.clone();
     dit(&mut sig[..]);
     assert!(sig == result, "testing dit");
@@ -25,8 +24,22 @@ fn test_fhwts() {
     let mut sig = vec![4f64, 2f64, 2f64, 4f64];
     let res = vec![3f64, 1f64, 0f64, -1f64];
     let orig = sig.clone();
-    fhwt(&mut sig[..]);
+    fhwt(&mut sig[..]).unwrap();
     assert!(sig == res, "testing dif");
-    fihwt(&mut sig[..]);
+    fihwt(&mut sig[..]).unwrap();
     assert!(sig == orig, "testing dit");
+}
+
+#[test]
+#[should_panic]
+fn test_fhwt() {
+    let mut sig = vec![4f64, 4f64, 4f64];
+    fhwt(&mut sig[..]).unwrap();
+}
+
+#[test]
+#[should_panic]
+fn test_fihwt() {
+    let mut sig = vec![4f64, 4f64, 4f64];
+    fihwt(&mut sig[..]).unwrap();
 }
