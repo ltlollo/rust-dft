@@ -6,7 +6,6 @@ extern crate core;
 
 use num::complex::Complex;
 use num::{Zero, One};
-use std::num::FromPrimitive;
 use num::traits::Float;
 use std::f32::consts::PI_2 as PI32_2;
 use std::f64::consts::PI_2 as PI64_2;
@@ -14,25 +13,28 @@ use std::f64::consts::PI_2 as PI64_2;
 pub trait MathConsts : Float {
     fn two_pi() -> Self;
     fn two() -> Self;
+    fn from_usize(val: usize) -> Self;
 }
 
 impl MathConsts for f64 {
     fn two_pi() -> f64 { PI64_2 }
     fn two() -> f64 { 2f64 }
+    fn from_usize(val: usize) -> f64 { val as f64 }
 }
 
 impl MathConsts for f32 {
     fn two_pi() -> f32 { PI32_2 }
     fn two() -> f32 { 2f32 }
+    fn from_usize(val: usize) -> f32 { val as f32 }
 }
 
 pub fn dit<T>(sig: &mut [Complex<T>])
-    where T : FromPrimitive + MathConsts {
+    where T : MathConsts {
     let len = sig.len();
     if len <= 1 {
         return;
     }
-    let n: T = FromPrimitive::from_usize(len).unwrap();
+    let n: T = MathConsts::from_usize(len);
     let mut even_vec = vec![Zero::zero(); len/2];
     let mut odd_vec = vec![Zero::zero(); len/2];
     let even = &mut even_vec[..];
@@ -44,7 +46,7 @@ pub fn dit<T>(sig: &mut [Complex<T>])
     dit(even);
     dit(odd);
     for i in (0..len/2 as usize) {
-        let k: T = FromPrimitive::from_usize(i).unwrap();
+        let k: T = MathConsts::from_usize(i);
         let th: T = -k*MathConsts::two_pi()/n;
         odd[i] = odd[i] * Complex::from_polar(&One::one(), &th);
         sig[i] = even[i] + odd[i];
@@ -53,16 +55,16 @@ pub fn dit<T>(sig: &mut [Complex<T>])
 }
 
 pub fn dif<T>(sig: &mut [Complex<T>])
-    where T :  FromPrimitive + MathConsts {
+    where T : MathConsts {
     let len = sig.len();
     if len <= 1 {
         return;
     }
-    let n: T = FromPrimitive::from_usize(len).unwrap();
+    let n: T = MathConsts::from_usize(len);
     let mut vec = sig.to_vec();
     let (first, second) = vec.split_at_mut(len/2);
     for i in (0..len/2 as usize) {
-        let k: T = FromPrimitive::from_usize(i).unwrap();
+        let k: T = MathConsts::from_usize(i);
         let th: T = -k*MathConsts::two_pi()/n;
         first[i] = first[i] + sig[i+len/2];
         second[i] = (sig[i]-second[i])*Complex::from_polar(&One::one(), &th);
