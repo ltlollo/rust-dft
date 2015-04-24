@@ -13,18 +13,17 @@ use std::f64::consts::PI_2 as PI64_2;
 
 pub trait MathConsts : Float {
     fn two_pi() -> Self;
+    fn two() -> Self;
 }
 
 impl MathConsts for f64 {
-    fn two_pi() -> f64 {
-        return PI64_2;
-    }
+    fn two_pi() -> f64 { PI64_2 }
+    fn two() -> f64 { 2f64 }
 }
 
 impl MathConsts for f32 {
-    fn two_pi() -> f32 {
-        return PI32_2;
-    }
+    fn two_pi() -> f32 { PI32_2 }
+    fn two() -> f32 { 2f32 }
 }
 
 pub fn dit<T>(sig: &mut [Complex<T>])
@@ -73,5 +72,43 @@ pub fn dif<T>(sig: &mut [Complex<T>])
     for i in (0..len/2 as usize) {
         sig[2*i] = first[i];
         sig[2*i+1] = second[i];
+    }
+}
+
+pub fn fhwt<T>(sig: &mut [T]) where T: MathConsts {
+    if sig.len() < 2 || sig.len()%2 != 0 {
+        return;
+    }
+    let times = (sig.len() as f32).log2() as usize;
+    let mut len  = sig.len()/2;
+    let mut i = 1;
+    for _ in(0..times) {
+        for j in (0..len) {
+            let p = (sig[2*i*j] + sig[2*i*j+i])/MathConsts::two();
+            let m = (sig[2*i*j] - sig[2*i*j+i])/MathConsts::two();
+            sig[2*i*j] = p;
+            sig[2*i*j+i] = m;
+        }
+        i = i*2;
+        len = len/2;
+    }
+}
+
+pub fn fihwt<T>(sig: &mut [T]) where T: Float {
+    if sig.len() < 2 || sig.len()%2 != 0 {
+        return;
+    }
+    let times = (sig.len() as f32).log2() as usize;
+    let mut len = sig.len()/2;
+    let mut i = 1;
+    for _ in (0..times) {
+        for j in (0..i) {
+            let p = sig[2*len*j] + sig[2*len*j+len];
+            let m = sig[2*len*j] - sig[2*len*j+len];
+            sig[2*len*j] = p;
+            sig[2*len*j+len] = m;
+        }
+        i = i*2;
+        len = len/2;
     }
 }
