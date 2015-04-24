@@ -1,4 +1,4 @@
-rust-dft
+rust-dsp
 ========
 
-simple discrete fourier tranformation
+some discrete signal processing algoritms
