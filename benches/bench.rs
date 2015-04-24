@@ -23,3 +23,15 @@ fn mesure_dit(b: &mut Bencher) {
     }).collect();
     b.iter(|| dit(&mut sig[..]));
 }
+
+#[bench]
+fn mesure_fhwt(b: &mut Bencher) {
+    let mut sig = vec![1f64; 2048];
+    b.iter(|| fhwt(&mut sig[..]));
+}
+
+#[bench]
+fn mesure_fihwt(b: &mut Bencher) {
+    let mut sig = vec![1f64; 2048];
+    b.iter(|| fihwt(&mut sig[..]));
+}
