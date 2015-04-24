@@ -1,15 +1,12 @@
 [package]
-
-name = "dft"
-version = "0.0.1"
+name = "dsp"
+version = "0.1.0"
 authors = ["ltlollo <ltlollo.it@gmail.com>"]
 
 [lib]
-
-name = "dfts"
+name = "dsp"
 path = "src/lib.rs"
 
 [dependencies.num]
-
 git = "https://github.com/rust-lang/num"
 

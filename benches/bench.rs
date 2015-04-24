@@ -1,12 +1,12 @@
 #![feature(test)]
 
-extern crate dfts;
+extern crate dsp;
 extern crate test;
 extern crate num;
 
 use num::complex::Complex;
 use test::Bencher;
-use dfts::*;
+use dsp::*;
 
 #[bench]
 fn mesure_dif(b: &mut Bencher) {

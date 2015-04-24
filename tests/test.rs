@@ -1,8 +1,8 @@
-extern crate dfts;
+extern crate dsp;
 extern crate num;
 
 use num::complex::Complex;
-use dfts::*;
+use dsp::*;
 
 #[test]
 fn test_dfts() {
