@@ -29,13 +29,12 @@ impl MathConsts for f32 {
     fn from_usize(val: usize) -> f32 { val as f32 }
 }
 
-pub fn dit<T>(sig: &mut [Complex<T>])
-    where T : MathConsts {
+pub fn dit<T>(sig: &mut [Complex<T>]) where T : MathConsts {
     let len = sig.len();
     if len <= 1 {
         return;
     }
-    let n: T = MathConsts::from_usize(len);
+    let n = T::from_usize(len);
     let mut even_vec = vec![Zero::zero(); len/2];
     let mut odd_vec = vec![Zero::zero(); len/2];
     let even = &mut even_vec[..];
@@ -47,26 +46,25 @@ pub fn dit<T>(sig: &mut [Complex<T>])
     dit(even);
     dit(odd);
     for i in (0..len/2 as usize) {
-        let k: T = MathConsts::from_usize(i);
-        let th: T = -k*MathConsts::two_pi()/n;
+        let k = T::from_usize(i);
+        let th = -k*T::two_pi()/n;
         odd[i] = odd[i] * Complex::from_polar(&One::one(), &th);
         sig[i] = even[i] + odd[i];
         sig[i+len/2] = even[i] - odd[i];
     }
 }
 
-pub fn dif<T>(sig: &mut [Complex<T>])
-    where T : MathConsts {
+pub fn dif<T>(sig: &mut [Complex<T>]) where T : MathConsts {
     let len = sig.len();
     if len <= 1 {
         return;
     }
-    let n: T = MathConsts::from_usize(len);
+    let n = T::from_usize(len);
     let mut vec = sig.to_vec();
     let (first, second) = vec.split_at_mut(len/2);
     for i in (0..len/2 as usize) {
-        let k: T = MathConsts::from_usize(i);
-        let th: T = -k*MathConsts::two_pi()/n;
+        let k = T::from_usize(i);
+        let th = -k*T::two_pi()/n;
         first[i] = first[i] + sig[i+len/2];
         second[i] = (sig[i]-second[i])*Complex::from_polar(&One::one(), &th);
     }
@@ -94,8 +92,8 @@ pub fn fhwt<T>(sig: &mut [T]) -> Option<()> where T: MathConsts {
     let mut i = 1;
     for _ in(0..times) {
         for j in (0..len) {
-            let p = (sig[2*i*j] + sig[2*i*j+i])/MathConsts::two();
-            let m = (sig[2*i*j] - sig[2*i*j+i])/MathConsts::two();
+            let p = (sig[2*i*j] + sig[2*i*j+i])/T::two();
+            let m = (sig[2*i*j] - sig[2*i*j+i])/T::two();
             sig[2*i*j] = p;
             sig[2*i*j+i] = m;
         }
