@@ -35,10 +35,8 @@ pub fn dit<T>(sig: &mut [Complex<T>]) where T : MathConsts {
         return;
     }
     let n = T::from_usize(len);
-    let mut even_vec = vec![Zero::zero(); len/2];
-    let mut odd_vec = vec![Zero::zero(); len/2];
-    let even = &mut even_vec[..];
-    let odd = &mut odd_vec[..];
+    let mut vec = vec![Zero::zero(); len];
+    let (even, odd) = vec.split_at_mut(len/2);
     for i in (0..len/2 as usize) {
         even[i] = sig[2*i];
         odd[i] = sig[2*i+1];
@@ -59,17 +57,21 @@ pub fn dif<T>(sig: &mut [Complex<T>]) where T : MathConsts {
     if len <= 1 {
         return;
     }
-    let n = T::from_usize(len);
-    let mut vec = sig.to_vec();
-    let (first, second) = vec.split_at_mut(len/2);
-    for i in (0..len/2 as usize) {
-        let k = T::from_usize(i);
-        let th = -k*T::two_pi()/n;
-        first[i] = first[i] + sig[i+len/2];
-        second[i] = (sig[i]-second[i])*Complex::from_polar(&One::one(), &th);
+    {
+        let n = T::from_usize(len);
+        let (first, second) = sig.split_at_mut(len/2);
+        for i in (0..len/2 as usize) {
+            let k = T::from_usize(i);
+            let th = -k*T::two_pi()/n;
+            let f = first[i];
+            first[i] = f + second[i];
+            second[i] = (f - second[i])*Complex::from_polar(&One::one(), &th);
+        }
+        dif(first);
+        dif(second);
     }
-    dif(first);
-    dif(second);
+    let vec = sig.to_vec();
+    let (first, second) = vec.split_at(len/2);
     for i in (0..len/2 as usize) {
         sig[2*i] = first[i];
         sig[2*i+1] = second[i];
