@@ -31,15 +31,13 @@ fn test_fhwts() {
 }
 
 #[test]
-#[should_panic]
-fn test_fhwt() {
-    let mut sig = vec![4f64, 4f64, 4f64];
-    fhwt(&mut sig[..]).unwrap();
+fn test_wrong_size_fhwt() {
+    let mut sig = vec![4f64; 3];
+    assert!(fhwt(&mut sig[..]) == None);
 }
 
 #[test]
-#[should_panic]
-fn test_fihwt() {
-    let mut sig = vec![4f64, 4f64, 4f64];
-    fihwt(&mut sig[..]).unwrap();
+fn test_wrong_size_fihwt() {
+    let mut sig = vec![4f64; 3];
+    assert!(fihwt(&mut sig[..]) == None);
 }

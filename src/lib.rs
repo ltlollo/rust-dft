@@ -29,6 +29,8 @@ impl MathConsts for f32 {
     fn from_usize(val: usize) -> f32 { val as f32 }
 }
 
+/// This function computes the fourier transformation of the input signal
+/// using the fast in-place time decimation algoritm
 pub fn dit<T>(sig: &mut [Complex<T>]) where T : MathConsts {
     let len = sig.len();
     if len <= 1 {
@@ -52,12 +54,13 @@ pub fn dit<T>(sig: &mut [Complex<T>]) where T : MathConsts {
     }
 }
 
+/// This function computes the fourier transformation of the input signal
+/// using the fast in-place time decimation algoritm
 pub fn dif<T>(sig: &mut [Complex<T>]) where T : MathConsts {
     let len = sig.len();
     if len <= 1 {
         return;
-    }
-    {
+    } {
         let n = T::from_usize(len);
         let (first, second) = sig.split_at_mut(len/2);
         for i in (0..len/2 as usize) {
@@ -82,6 +85,8 @@ fn is_pow2(n: usize) -> bool {
     (2 as usize).pow((n as f32).log2() as u32) == n
 }
 
+/// This function computes the haar wavelet transform
+/// the signal size must be a power of 2
 pub fn fhwt<T>(sig: &mut [T]) -> Option<()> where T: MathConsts {
     if !is_pow2(sig.len()) {
         return None;
@@ -105,6 +110,8 @@ pub fn fhwt<T>(sig: &mut [T]) -> Option<()> where T: MathConsts {
     Some(())
 }
 
+/// This function computes the inverse haar wavelet transform
+/// the signal size must be a power of 2
 pub fn fihwt<T>(sig: &mut [T]) -> Option<()> where T: Float {
     if !is_pow2(sig.len()) {
         return None;
