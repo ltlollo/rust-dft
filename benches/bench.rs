@@ -17,6 +17,24 @@ fn mesure_dif(b: &mut Bencher) {
 }
 
 #[bench]
+fn mesure_dif_table(b: &mut Bencher) {
+    let mut t : TwiddleTable<f64> = TwiddleTable::precompute(2048);
+    let mut sig : Vec<_> = (0..2048).map(|x| {
+        Complex::new( x as f64, x as f64 + 1f64)
+    }).collect();
+    b.iter(|| t.dif(&mut sig[..]));
+}
+
+#[bench]
+fn mesure_dit_table(b: &mut Bencher) {
+    let mut t : TwiddleTable<f64> = TwiddleTable::precompute(2048);
+    let mut sig : Vec<_> = (0..2048).map(|x| {
+        Complex::new( x as f64, x as f64 + 1f64)
+    }).collect();
+    b.iter(|| t.dit(&mut sig[..]));
+}
+
+#[bench]
 fn mesure_dit(b: &mut Bencher) {
     let mut sig : Vec<_> = (0..2048).map(|x| {
         Complex::new(x as f64, x as f64 + 1f64)

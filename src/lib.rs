@@ -60,7 +60,8 @@ pub fn dif<T>(sig: &mut [Complex<T>]) where T : MathConsts {
     let len = sig.len();
     if len <= 1 {
         return;
-    } {
+    }
+    {
         let n = T::from_usize(len);
         let (first, second) = sig.split_at_mut(len/2);
         for i in (0..len/2 as usize) {
@@ -81,11 +82,94 @@ pub fn dif<T>(sig: &mut [Complex<T>]) where T : MathConsts {
     }
 }
 
+pub struct TwiddleTable<T> {
+    table: Vec<Vec<Complex<T>>>,
+}
+
+impl<T> TwiddleTable<T> where T: MathConsts {
+    fn dit_noalloc(&self, sig: &mut [Complex<T>]) {
+        let len = sig.len();
+        if len <= 1 {
+            return;
+        }
+        let mut vec = vec![Zero::zero(); len];
+        let (even, odd) = vec.split_at_mut(len/2);
+        for i in (0..len/2 as usize) {
+            even[i] = sig[2*i];
+            odd[i] = sig[2*i+1];
+        }
+        dit(even);
+        dit(odd);
+        let w = &self.table[len/2];
+        for i in (0..len/2 as usize) {
+            odd[i] = odd[i]*w[i];
+            sig[i] = even[i] + odd[i];
+            sig[i+len/2] = even[i] - odd[i];
+        }
+    }
+    pub fn dit(&mut self, sig: &mut [Complex<T>]) {
+        self.preallocate(sig.len());
+        self.dit_noalloc(sig);
+    }
+    fn dif_noalloc(&self, sig: &mut [Complex<T>]) {
+        let len = sig.len();
+        if len <= 1 {
+            return;
+        }
+        {
+            let (first, second) = sig.split_at_mut(len/2);
+            let w = &self.table[len/2];
+            for i in (0..len/2 as usize) {
+                let f = first[i];
+                first[i] = f + second[i];
+                second[i] = (f - second[i])*w[i];
+            }
+            dif(first);
+            dif(second);
+        }
+        let vec = sig.to_vec();
+        let (first, second) = vec.split_at(len/2);
+        for i in (0..len/2 as usize) {
+            sig[2*i] = first[i];
+            sig[2*i+1] = second[i];
+        }
+    }
+    pub fn dif(&mut self, sig: &mut [Complex<T>]) {
+        self.preallocate(sig.len());
+        self.dif_noalloc(sig);
+    }
+    fn preallocate(&mut self, siglen: usize) {
+        if siglen/2 > self.table.len()+1 {
+            for j in (self.table.len()..siglen/2+1) {
+                let w: Vec<Complex<T>> = (0..j).map(|x| {
+                    let th = T::two_pi()*T::from_usize(x)/T::from_usize(j);
+                    Complex::from_polar(&One::one(), &th)
+                }).collect();
+                self.table.push(w);
+            }
+        }
+    } 
+    pub fn precompute(len: usize) -> TwiddleTable<T> {
+        let n = len/2+1;
+        let mut t: Vec<Vec<Complex<T>>> = Vec::with_capacity(n);
+        for j in (0..n) {
+            let w: Vec<Complex<T>> = (0..j).map(|x| {
+                let th = T::two_pi()*T::from_usize(x)/T::from_usize(j);
+                Complex::from_polar(&One::one(), &th)
+            }).collect();
+            t.push(w);
+        }
+        TwiddleTable{ table: t }
+    }
+    pub fn new() -> TwiddleTable<T> {
+        TwiddleTable{ table: Vec::new() }
+    }
+}
 fn is_pow2(n: usize) -> bool {
     (2 as usize).pow((n as f32).log2() as u32) == n
 }
 
-/// This function computes the haar wavelet transform
+/// This function computes the fast haar wavelet transform
 /// the signal size must be a power of 2
 pub fn fhwt<T>(sig: &mut [T]) -> Option<()> where T: MathConsts {
     if !is_pow2(sig.len()) {
@@ -110,7 +194,7 @@ pub fn fhwt<T>(sig: &mut [T]) -> Option<()> where T: MathConsts {
     Some(())
 }
 
-/// This function computes the inverse haar wavelet transform
+/// This function computes the fast inverse haar wavelet transform
 /// the signal size must be a power of 2
 pub fn fihwt<T>(sig: &mut [T]) -> Option<()> where T: Float {
     if !is_pow2(sig.len()) {
