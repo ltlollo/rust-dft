@@ -7,24 +7,22 @@ extern crate core;
 use num::complex::Complex;
 use num::{Zero, One};
 use num::traits::Float;
-use std::f32::consts::PI_2 as PI32_2;
-use std::f64::consts::PI_2 as PI64_2;
 use std::option::Option;
 
-pub trait MathConsts : Float {
+pub trait MathConsts : Float + Send {
     fn two_pi() -> Self;
     fn two() -> Self;
     fn from_usize(val: usize) -> Self;
 }
 
 impl MathConsts for f64 {
-    fn two_pi() -> f64 { PI64_2 }
+    fn two_pi() -> f64 { 6.28318530717958647692528676655900576f64 }
     fn two() -> f64 { 2f64 }
     fn from_usize(val: usize) -> f64 { val as f64 }
 }
 
 impl MathConsts for f32 {
-    fn two_pi() -> f32 { PI32_2 }
+    fn two_pi() -> f32 { 6.28318530717958647692528676655900576f32 }
     fn two() -> f32 { 2f32 }
     fn from_usize(val: usize) -> f32 { val as f32 }
 }
