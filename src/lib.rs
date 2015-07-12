@@ -15,12 +15,16 @@ pub trait MathConsts : Float + Send {
 }
 
 impl MathConsts for f64 {
+    #[inline(always)]
     fn two_pi() -> f64 { 6.28318530717958647692528676655900576f64 }
+    #[inline(always)]
     fn from_usize(val: usize) -> f64 { val as f64 }
 }
 
 impl MathConsts for f32 {
+    #[inline(always)]
     fn two_pi() -> f32 { 6.28318530717958647692528676655900576f32 }
+    #[inline(always)]
     fn from_usize(val: usize) -> f32 { val as f32 }
 }
 
