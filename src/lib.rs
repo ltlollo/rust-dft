@@ -11,19 +11,16 @@ use std::option::Option;
 
 pub trait MathConsts : Float + Send {
     fn two_pi() -> Self;
-    fn two() -> Self;
     fn from_usize(val: usize) -> Self;
 }
 
 impl MathConsts for f64 {
     fn two_pi() -> f64 { 6.28318530717958647692528676655900576f64 }
-    fn two() -> f64 { 2f64 }
     fn from_usize(val: usize) -> f64 { val as f64 }
 }
 
 impl MathConsts for f32 {
     fn two_pi() -> f32 { 6.28318530717958647692528676655900576f32 }
-    fn two() -> f32 { 2f32 }
     fn from_usize(val: usize) -> f32 { val as f32 }
 }
 
@@ -181,8 +178,8 @@ pub fn fhwt<T>(sig: &mut [T]) -> Option<()> where T: MathConsts {
     let mut i = 1;
     for _ in(0..times) {
         for j in (0..len) {
-            let p = (sig[2*i*j] + sig[2*i*j+i])/T::two();
-            let m = (sig[2*i*j] - sig[2*i*j+i])/T::two();
+            let p = (sig[2*i*j] + sig[2*i*j+i])/T::from_usize(2);
+            let m = (sig[2*i*j] - sig[2*i*j+i])/T::from_usize(2);
             sig[2*i*j] = p;
             sig[2*i*j+i] = m;
         }
